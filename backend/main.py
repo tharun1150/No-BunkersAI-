@@ -9,7 +9,7 @@ from backend.routes.student import router as student_router
 # Create database tables if they do not exist
 models.Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="NO BUNKERS AI API")
+app = FastAPI(title="NO BUNKERSss AI API")
 
 # Register routers
 app.include_router(student_router)
