@@ -1,4 +1,7 @@
-
+Front end:
+cd frontend
+npm run dev
+backend: uvicorn backend.main:app --reload
 **1 NO BUNKERS AI
 
 AI-powered student absence verification and parent-student reason consistency analysis.
@@ -17,3 +20,5 @@ AI-powered student absence verification and parent-student reason consistency an
 
 ** Development
 We will build and test each component separately before integrating them.
+
+

@@ -1,18 +1,30 @@
 from fastapi import Depends, FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from backend import models
 from backend.database import engine, get_db
+from backend.routes.admin import router as admin_router
 from backend.routes.student import router as student_router
 
 # Create database tables if they do not exist
 models.Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="NO BUNKERSss AI API")
+app = FastAPI(title="NO BUNKERS AI API")
+
+# Enable CORS for frontend requests
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Register routers
 app.include_router(student_router)
+app.include_router(admin_router)
 
 
 @app.get("/")
