@@ -17,9 +17,12 @@ const AtRisk = lazy(() => import("./pages/admin/AtRisk"));
 const Reports = lazy(() => import("./pages/admin/Reports"));
 const AIAnalytics = lazy(() => import("./pages/admin/AIAnalytics"));
 const VoiceAgent = lazy(() => import("./pages/admin/VoiceAgent"));
+const CallRecordings = lazy(() => import("./pages/admin/CallRecordings"));
+const VoiceReports = lazy(() => import("./pages/hod/VoiceReports"));
 const ParentDashboard = lazy(() => import("./pages/parent/Dashboard"));
 const Notifications = lazy(() => import("./pages/shared/Notifications"));
 const LeaveRequests = lazy(() => import("./pages/shared/LeaveRequests"));
+const OutingManagement = lazy(() => import("./pages/shared/OutingManagement"));
 
 type AppState = "landing" | "login" | "app";
 
@@ -94,6 +97,9 @@ export default function App() {
     // Shared pages
     if (activePage === "notifications") return <Notifications {...props} />;
     if (activePage === "leave") return <LeaveRequests {...props} role={role} />;
+    if (activePage === "outing") return <OutingManagement {...props} role={role} />;
+    if (activePage === "voice-reports") return <VoiceReports {...props} departmentOverride={role === "faculty" ? "CSE" : undefined} />;
+    if (activePage === "call-recordings") return <CallRecordings {...props} onNavigate={setActivePage} />;
 
     // Student
     if (role === "student") {
@@ -105,7 +111,7 @@ export default function App() {
     // Faculty
     if (role === "faculty") {
       if (activePage === "dashboard") return <FacultyDashboard {...props} onNavigate={setActivePage} />;
-      if (activePage === "mark-attendance") return <MarkAttendance {...props} />;
+      if (activePage === "mark-attendance") return <MarkAttendance {...props} onNavigate={setActivePage} />;
       if (activePage === "classes") return <ClassDetails {...props} />;
       if (activePage === "at-risk") return <AtRisk {...props} />;
       return <PlaceholderPage title={activePage.charAt(0).toUpperCase() + activePage.slice(1)} darkMode={darkMode} />;
@@ -120,7 +126,7 @@ export default function App() {
       if (activePage === "at-risk") return <AtRisk {...props} />;
       if (activePage === "reports") return <Reports {...props} />;
       if (activePage === "ai-analytics") return <AIAnalytics {...props} />;
-      if (activePage === "voice-agent") return <VoiceAgent {...props} />;
+      if (activePage === "voice-agent") return <VoiceAgent {...props} onNavigate={setActivePage} />;
       return <PlaceholderPage title={activePage.charAt(0).toUpperCase() + activePage.slice(1)} darkMode={darkMode} />;
     }
 

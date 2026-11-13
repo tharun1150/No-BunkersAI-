@@ -3,7 +3,8 @@ import {
   LayoutDashboard, Users, GraduationCap, BookOpen, CalendarCheck,
   FileText, Bell, LogOut, ChevronLeft, ChevronRight, Menu, X,
   AlertTriangle, BarChart3, Settings, UserCheck, ClipboardList,
-  MessageSquare, Brain, Phone, Home, TrendingUp, Building2
+  MessageSquare, Brain, Phone, Home, TrendingUp, Building2,
+  ShieldCheck, QrCode, ShieldAlert, Headphones
 } from "lucide-react";
 import type { Role } from "../../data/mockData";
 
@@ -16,6 +17,7 @@ interface SidebarItem {
 function getSidebarItems(role: Role): SidebarItem[] {
   if (role === "student") return [
     { icon: <LayoutDashboard size={18} />, label: "Dashboard", key: "dashboard" },
+    { icon: <ShieldCheck size={18} />, label: "Outing & Gate Pass", key: "outing" },
     { icon: <CalendarCheck size={18} />, label: "My Attendance", key: "attendance" },
     { icon: <BookOpen size={18} />, label: "Subjects", key: "subjects" },
     { icon: <ClipboardList size={18} />, label: "Leave Requests", key: "leave" },
@@ -24,6 +26,9 @@ function getSidebarItems(role: Role): SidebarItem[] {
   ];
   if (role === "faculty") return [
     { icon: <LayoutDashboard size={18} />, label: "Dashboard", key: "dashboard" },
+    { icon: <Headphones size={18} />, label: "Call Recordings & Transcripts", key: "call-recordings" },
+    { icon: <ShieldAlert size={18} />, label: "Voice AI Reports (HOD)", key: "voice-reports" },
+    { icon: <ShieldCheck size={18} />, label: "HOD Outings", key: "outing" },
     { icon: <CalendarCheck size={18} />, label: "Mark Attendance", key: "mark-attendance" },
     { icon: <BookOpen size={18} />, label: "My Classes", key: "classes" },
     { icon: <Users size={18} />, label: "Students", key: "students" },
@@ -34,6 +39,10 @@ function getSidebarItems(role: Role): SidebarItem[] {
   ];
   if (role === "admin") return [
     { icon: <LayoutDashboard size={18} />, label: "Overview", key: "dashboard" },
+    { icon: <Headphones size={18} />, label: "Call Recordings & Transcripts", key: "call-recordings" },
+    { icon: <ShieldAlert size={18} />, label: "Voice AI Reports (HOD)", key: "voice-reports" },
+    { icon: <Phone size={18} />, label: "Voice AI Calling & Telephony", key: "voice-agent" },
+    { icon: <ShieldCheck size={18} />, label: "Gate Security & Scanner", key: "outing" },
     { icon: <GraduationCap size={18} />, label: "Students", key: "students" },
     { icon: <BookOpen size={18} />, label: "Classes & Sections", key: "classes" },
     { icon: <UserCheck size={18} />, label: "Faculty", key: "faculty" },
@@ -49,6 +58,7 @@ function getSidebarItems(role: Role): SidebarItem[] {
   ];
   if (role === "parent") return [
     { icon: <Home size={18} />, label: "Dashboard", key: "dashboard" },
+    { icon: <ShieldCheck size={18} />, label: "Outing Requests", key: "outing" },
     { icon: <CalendarCheck size={18} />, label: "Attendance", key: "attendance" },
     { icon: <TrendingUp size={18} />, label: "Progress", key: "progress" },
     { icon: <MessageSquare size={18} />, label: "Contact Faculty", key: "contact" },

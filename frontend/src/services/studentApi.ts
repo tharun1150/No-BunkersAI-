@@ -184,3 +184,69 @@ export async function getLiveAttendance(filters?: {
   return response.json();
 }
 
+export interface StudentAIQueryResponse {
+  student_id: string;
+  student_name: string;
+  roll_number?: string;
+  department?: string;
+  class_name?: string;
+  question: string;
+  ai_answer: string;
+  metrics: {
+    today_date: string;
+    today_periods_total: number;
+    today_periods_attended: number;
+    today_periods_absent: number;
+    total_classes_till_date: number;
+    classes_attended: number;
+    classes_absent: number;
+    attendance_percentage: number;
+    is_at_risk: boolean;
+    status: "critical" | "warning" | "safe";
+    classes_needed_for_75: number;
+    student_phone?: string;
+    parent_name?: string;
+    parent_phone?: string;
+  };
+  today_schedule: Array<{
+    period: string;
+    subject: string;
+    status: "Present" | "Absent" | "Late";
+    faculty?: string;
+    remarks?: string;
+  }>;
+  subject_breakdown: Array<{
+    subject: string;
+    total: number;
+    attended: number;
+    absent: number;
+    percentage: number;
+    faculty?: string;
+  }>;
+  outing_status?: string;
+  recent_voice_call_verdict?: string;
+}
+
+export async function askStudentAI(
+  identifier: string,
+  question: string
+): Promise<StudentAIQueryResponse> {
+  const response = await fetch(
+    `${API_BASE}/students/${encodeURIComponent(identifier)}/ask-ai`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ question }),
+    }
+  );
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(
+      errorData.detail || `AI Inquiry failed: ${response.statusText}`
+    );
+  }
+
+  return response.json();
+}
+

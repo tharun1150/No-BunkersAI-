@@ -11,6 +11,8 @@ import {
   Loader2,
   Database,
   Calendar,
+  PhoneCall,
+  ShieldAlert,
 } from "lucide-react";
 import { students as mockStudents } from "../../data/mockData";
 import {
@@ -19,9 +21,11 @@ import {
   BulkAttendanceResponse,
   BackendStudent,
 } from "../../services/studentApi";
+import { batchStartVerification } from "../../services/verificationApi";
 
 interface Props {
   darkMode: boolean;
+  onNavigate?: (page: string) => void;
 }
 
 type StatusType = "Present" | "Absent" | "Late";
@@ -34,7 +38,7 @@ interface StudentAttRow {
   isDb?: boolean;
 }
 
-export default function MarkAttendance({ darkMode }: Props) {
+export default function MarkAttendance({ darkMode, onNavigate }: Props) {
   const [rows, setRows] = useState<StudentAttRow[]>([]);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
@@ -56,6 +60,8 @@ export default function MarkAttendance({ darkMode }: Props) {
     null
   );
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [voiceTriggered, setVoiceTriggered] = useState(false);
+  const [voiceLoading, setVoiceLoading] = useState(false);
 
   const dm = darkMode;
   const card = `rounded-xl border ${
@@ -187,6 +193,22 @@ export default function MarkAttendance({ darkMode }: Props) {
       setShowModal(true);
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleTriggerVoiceAI = async () => {
+    setVoiceLoading(true);
+    try {
+      await batchStartVerification({
+        department: "CSE",
+        section,
+        date: selectedDate,
+      });
+      setVoiceTriggered(true);
+    } catch (err: any) {
+      alert(err.message || "Failed to trigger Voice AI calls");
+    } finally {
+      setVoiceLoading(false);
     }
   };
 
@@ -598,11 +620,45 @@ export default function MarkAttendance({ darkMode }: Props) {
               {saveResult?.attendance_rate ?? `${attPct}%`} Attendance
             </div>
 
+            {/* Voice AI Auto-Calling Action */}
+            {(saveResult?.absent || absent) > 0 && (
+              <div className="mb-4 space-y-2">
+                {!voiceTriggered ? (
+                  <button
+                    onClick={handleTriggerVoiceAI}
+                    disabled={voiceLoading}
+                    className="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-xs font-bold flex items-center justify-center gap-2 shadow-md hover:from-indigo-700 hover:to-purple-700 transition-all"
+                  >
+                    {voiceLoading ? <RefreshCw size={14} className="animate-spin" /> : <PhoneCall size={14} />}
+                    <span>Auto-Call {saveResult?.absent ?? absent} Absent Students via Voice AI</span>
+                  </button>
+                ) : (
+                  <div className="p-3 rounded-xl bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-900/60 text-green-800 dark:text-green-300 text-xs text-center font-medium">
+                    ✓ Voice AI calling initiated for absent students!
+                    {onNavigate && (
+                      <button
+                        onClick={() => {
+                          setShowModal(false);
+                          onNavigate("voice-reports");
+                        }}
+                        className="block mx-auto mt-1.5 underline font-bold text-indigo-600 dark:text-indigo-400"
+                      >
+                        View in Voice AI Reports (HOD) →
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+
             <button
-              onClick={() => setShowModal(false)}
-              className="btn-primary w-full py-2.5 text-sm"
+              onClick={() => {
+                setShowModal(false);
+                setVoiceTriggered(false);
+              }}
+              className="btn-secondary w-full py-2.5 text-xs"
             >
-              Done
+              Close
             </button>
           </div>
         </div>
